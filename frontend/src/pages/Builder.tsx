@@ -5,6 +5,7 @@ import { FileExplorer } from '../components/FileExplorer';
 import { TabView } from '../components/TabView';
 import { CodeEditor } from '../components/CodeEditor';
 import { PreviewFrame } from '../components/PreviewFrame';
+import { Terminal } from '../components/Terminal';
 import { Step, FileItem, StepType } from '../types';
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
@@ -37,6 +38,12 @@ export function Builder() {
   const [templateSet, setTemplateSet] = useState(false);
   const { webcontainer, error: webContainerError } = useWebContainer();
 
+  useEffect(() => {
+    if (webcontainer) {
+      handleLog('WebContainer initialized successfully');
+    }
+  }, [webcontainer]);
+
   const [currentStep, setCurrentStep] = useState(1);
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
@@ -44,6 +51,13 @@ export function Builder() {
   const [steps, setSteps] = useState<Step[]>([]);
 
   const [files, setFiles] = useState<FileItem[]>([]);
+  const [logs, setLogs] = useState<string[]>(['Terminal initialized. Ready to show build logs...']);
+  const [isPreviewRunning, setIsPreviewRunning] = useState(false);
+
+  const handleLog = (log: string) => {
+    setLogs(prev => [...prev, log]);
+    setIsPreviewRunning(true);
+  };
 
   useEffect(() => {
     let originalFiles = [...files];
@@ -51,6 +65,7 @@ export function Builder() {
     steps.filter(({status}) => status === "pending").map(step => {
       updateHappened = true;
       if (step?.type === StepType.CreateFile) {
+        handleLog(`Creating file: ${step.path}`);
         let parsedPath = step.path?.split("/") ?? []; // ["src", "components", "App.tsx"]
         let currentFileStructure = [...originalFiles]; // {}
         let finalAnswerRef = currentFileStructure;
@@ -71,8 +86,10 @@ export function Builder() {
                 path: currentFolder,
                 content: step.code
               })
+              handleLog(`✓ File created: ${currentFolder}`);
             } else {
               file.content = step.code;
+              handleLog(`✓ File updated: ${currentFolder}`);
             }
           } else {
             /// in a folder
@@ -91,6 +108,11 @@ export function Builder() {
           }
         }
         originalFiles = finalAnswerRef;
+      } else if (step?.type === StepType.RunScript) {
+        handleLog(`Running command: ${step.code}`);
+        // Note: Shell commands are not executed in the browser environment
+        // They would be executed in the WebContainer when the preview starts
+        handleLog(`✓ Command queued: ${step.code}`);
       }
 
     })
@@ -338,7 +360,7 @@ export function Builder() {
                     {activeTab === 'code' ? (
                       <CodeEditor file={selectedFile} />
                     ) : (
-                      <PreviewFrame webContainer={webcontainer} files={files} />
+                      <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
                     )}
                   </div>
                 </div>
@@ -363,34 +385,48 @@ export function Builder() {
 
           {/* Bottom Section - Split between Explorer and Editor */}
           <div className="flex-1 overflow-hidden">
-            <ResizablePanelGroup direction="horizontal" className="h-full">
-              {/* File Explorer */}
-              <ResizablePanel defaultSize={35} minSize={25} maxSize={50}>
-                <div className="h-full p-2 pr-1">
-                  <div className="h-full animate-fade-in">
-                    <FileExplorer
-                      files={files}
-                      onFileSelect={setSelectedFile}
-                    />
-                  </div>
-                </div>
+            <ResizablePanelGroup direction="vertical" className="h-full">
+              {/* Main content area */}
+              <ResizablePanel defaultSize={75} minSize={50}>
+                <ResizablePanelGroup direction="horizontal" className="h-full">
+                  {/* File Explorer */}
+                  <ResizablePanel defaultSize={35} minSize={25} maxSize={50}>
+                    <div className="h-full p-2 pr-1">
+                      <div className="h-full animate-fade-in">
+                        <FileExplorer
+                          files={files}
+                          onFileSelect={setSelectedFile}
+                        />
+                      </div>
+                    </div>
+                  </ResizablePanel>
+
+                  <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+
+                  {/* Code Editor + Preview */}
+                  <ResizablePanel defaultSize={65} minSize={50}>
+                    <div className="h-full p-2 pl-1">
+                      <div className="glass-effect rounded-2xl modern-shadow h-full flex flex-col overflow-hidden animate-slide-up">
+                        <TabView activeTab={activeTab} onTabChange={setActiveTab} />
+                        <div className="flex-1 min-h-0 overflow-hidden">
+                          {activeTab === 'code' ? (
+                            <CodeEditor file={selectedFile} />
+                          ) : (
+                            <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </ResizablePanel>
+                </ResizablePanelGroup>
               </ResizablePanel>
 
-              <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+              <ResizableHandle withHandle className="h-2 bg-gradient-to-r from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
 
-              {/* Code Editor + Preview */}
-              <ResizablePanel defaultSize={65} minSize={50}>
-                <div className="h-full p-2 pl-1">
-                  <div className="glass-effect rounded-2xl modern-shadow h-full flex flex-col overflow-hidden animate-slide-up">
-                    <TabView activeTab={activeTab} onTabChange={setActiveTab} />
-                    <div className="flex-1 min-h-0 overflow-hidden">
-                      {activeTab === 'code' ? (
-                        <CodeEditor file={selectedFile} />
-                      ) : (
-                        <PreviewFrame webContainer={webcontainer} files={files} />
-                      )}
-                    </div>
-                  </div>
+              {/* Terminal */}
+              <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
+                <div className="h-full p-2">
+                  <Terminal logs={logs} isRunning={isPreviewRunning} />
                 </div>
               </ResizablePanel>
             </ResizablePanelGroup>

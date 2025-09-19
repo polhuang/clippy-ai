@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { User, Bot } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface ChatMessageProps {
   message: string;
@@ -25,8 +26,8 @@ export function ChatMessage({ message, isUser, timestamp }: ChatMessageProps) {
           ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white ml-auto border-0'
           : 'bg-white/90 backdrop-blur-sm border border-white/50 text-gray-800'
       }`}>
-        <div className="text-sm whitespace-pre-wrap leading-relaxed prose prose-sm max-w-none">
-          {message}
+        <div className="text-sm leading-relaxed prose prose-sm max-w-none">
+          <ReactMarkdown>{message}</ReactMarkdown>
         </div>
         {timestamp && (
           <div className={`text-xs mt-3 ${
