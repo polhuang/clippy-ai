@@ -5,9 +5,11 @@ interface PreviewFrameProps {
   files: any[];
   webContainer: WebContainer | undefined;
   onLog?: (log: string) => void;
+  loading?: boolean;
+  templateSet?: boolean;
 }
 
-export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) {
+export function PreviewFrame({ files, webContainer, onLog, loading = false, templateSet = false }: PreviewFrameProps) {
   // In a real implementation, this would compile and render the preview
   const [url, setUrl] = useState("");
   const [isStarting, setIsStarting] = useState(false);
@@ -16,6 +18,11 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
   async function main() {
     if (!webContainer) {
       onLog?.('WebContainer not ready yet');
+      return;
+    }
+
+    if (loading || !templateSet) {
+      onLog?.('Build steps are still running, waiting to complete...');
       return;
     }
 
@@ -40,7 +47,7 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
 
     const currentPackageJson = findPackageJson(files);
     if (!currentPackageJson) {
-      onLog?.('No package.json found, cannot start dev server');
+      onLog?.('No package.json found, waiting for build steps to complete');
       return;
     }
 
@@ -158,11 +165,11 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
     main()
   }, [webContainer, files])
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-green-50/30">
       {!url ? (
         <div className="h-full flex items-center justify-center">
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto bg-muted/50 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto bg-green-100/50 rounded-2xl flex items-center justify-center">
               {isStarting ? (
                 <div className="w-6 h-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
               ) : (
@@ -174,12 +181,14 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
             <div>
               <p className="text-lg font-semibold mb-2 text-foreground">
                 {!webContainer ? 'Initializing WebContainer...' :
+                 loading || !templateSet ? 'Build steps running...' :
                  !files || files.length === 0 ? 'Waiting for files...' :
                  isStarting ? 'Starting preview server...' :
                  'Preview Loading...'}
               </p>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
                 {!webContainer ? 'Setting up the development environment' :
+                 loading || !templateSet ? 'Generating project files and structure' :
                  !files || files.length === 0 ? 'Generate some files to see a preview' :
                  isStarting ? 'Installing dependencies and starting the dev server' :
                  'Please wait while the preview loads'}
@@ -190,7 +199,7 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
       ) : (
         <div className="h-full flex flex-col">
           {/* Preview header */}
-          <div className="px-6 py-3 border-b border-border/50 bg-muted/20 flex items-center justify-between">
+          <div className="px-6 py-3 border-b border-border/50 bg-green-100/40 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span className="font-medium text-sm text-foreground">Live Preview</span>

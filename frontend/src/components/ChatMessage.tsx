@@ -27,7 +27,28 @@ export function ChatMessage({ message, isUser, timestamp }: ChatMessageProps) {
           : 'bg-white/90 backdrop-blur-sm border border-white/50 text-gray-800'
       }`}>
         <div className="text-sm leading-relaxed prose prose-sm max-w-none">
-          <ReactMarkdown>{message}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              code: ({node, inline, className, children, ...props}) => {
+                if (inline) {
+                  return (
+                    <code className="bg-gray-800 text-gray-100 px-1.5 py-0.5 rounded text-xs font-mono" {...props}>
+                      {children}
+                    </code>
+                  );
+                }
+                return (
+                  <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-3 border border-gray-700">
+                    <code className="font-mono text-sm" {...props}>
+                      {children}
+                    </code>
+                  </pre>
+                );
+              }
+            }}
+          >
+            {message}
+          </ReactMarkdown>
         </div>
         {timestamp && (
           <div className={`text-xs mt-3 ${

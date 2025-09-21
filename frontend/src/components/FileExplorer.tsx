@@ -8,24 +8,25 @@ import { cn } from '@/lib/utils';
 interface FileExplorerProps {
   files: FileItem[];
   onFileSelect: (file: FileItem) => void;
+  selectedFile?: FileItem | null;
 }
 
 interface FileNodeProps {
   item: FileItem;
   depth: number;
   onFileClick: (file: FileItem) => void;
+  selectedFile?: FileItem | null;
 }
 
-function FileNode({ item, depth, onFileClick }: FileNodeProps) {
+function FileNode({ item, depth, onFileClick, selectedFile }: FileNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
+  const isSelected = selectedFile?.path === item.path;
 
   const handleClick = () => {
     if (item.type === 'folder') {
       setIsExpanded(!isExpanded);
     } else {
       onFileClick(item);
-      setIsSelected(true);
     }
   };
 
@@ -88,6 +89,7 @@ function FileNode({ item, depth, onFileClick }: FileNodeProps) {
               item={child}
               depth={depth + 1}
               onFileClick={onFileClick}
+              selectedFile={selectedFile}
             />
           ))}
         </div>
@@ -96,10 +98,10 @@ function FileNode({ item, depth, onFileClick }: FileNodeProps) {
   );
 }
 
-export function FileExplorer({ files, onFileSelect }: FileExplorerProps) {
+export function FileExplorer({ files, onFileSelect, selectedFile }: FileExplorerProps) {
   return (
     <div className="h-full flex flex-col bg-transparent">
-      <div className="flex border-b border-gray-200/60 px-4 py-3 bg-gradient-to-r from-gray-50/80 to-blue-50/40">
+      <div className="flex px-4 py-3 bg-gradient-to-r from-gray-50/80 to-blue-50/40">
         <div className="flex rounded-xl p-1 gap-1 w-full sm:w-auto">
           <h2 className="text-sm font-semibold flex items-center gap-2 text-gray-700 h-8 px-4">
             <FolderTree className="w-4 h-4 text-green-600" />
@@ -117,6 +119,7 @@ export function FileExplorer({ files, onFileSelect }: FileExplorerProps) {
                   item={file}
                   depth={0}
                   onFileClick={onFileSelect}
+                  selectedFile={selectedFile}
                 />
               ))}
             </div>

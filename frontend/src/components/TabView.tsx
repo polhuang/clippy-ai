@@ -10,8 +10,8 @@ interface TabViewProps {
 
 export function TabView({ activeTab, onTabChange }: TabViewProps) {
   return (
-    <div className="flex border-b border-gray-200/60 px-4 py-3 bg-gradient-to-r from-gray-50/80 to-blue-50/40">
-      <div className="flex bg-white/80 backdrop-blur-sm rounded-xl p-1 gap-1 w-full sm:w-auto shadow-md border border-gray-200/50">
+    <div className="flex px-4 py-3 bg-gradient-to-r from-gray-50/80 to-blue-50/40">
+      <div className="flex bg-white/80 backdrop-blur-sm rounded-xl p-1 gap-1 w-full sm:w-auto shadow-md">
         <Button
           variant={activeTab === 'code' ? 'default' : 'ghost'}
           size="sm"

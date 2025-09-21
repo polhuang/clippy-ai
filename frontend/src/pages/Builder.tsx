@@ -47,6 +47,11 @@ export function Builder() {
   const [currentStep, setCurrentStep] = useState(1);
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
+
+  const handleFileSelect = (file: FileItem) => {
+    setSelectedFile(file);
+    setActiveTab('code');
+  };
   
   const [steps, setSteps] = useState<Step[]>([]);
 
@@ -412,7 +417,8 @@ export function Builder() {
                         <div className="h-full animate-fade-in">
                           <FileExplorer
                             files={files}
-                            onFileSelect={setSelectedFile}
+                            onFileSelect={handleFileSelect}
+                            selectedFile={selectedFile}
                           />
                         </div>
                       </div>
@@ -421,11 +427,12 @@ export function Builder() {
                       <div className="flex-1 flex flex-col overflow-hidden">
                         <TabView activeTab={activeTab} onTabChange={setActiveTab} />
                         <div className="flex-1 min-h-0 overflow-hidden">
-                          {activeTab === 'code' ? (
+                          <div className={`h-full ${activeTab === 'code' ? 'block' : 'hidden'}`}>
                             <CodeEditor file={selectedFile} />
-                          ) : (
-                            <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
-                          )}
+                          </div>
+                          <div className={`h-full ${activeTab === 'preview' ? 'block' : 'hidden'}`}>
+                            <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} loading={loading} templateSet={templateSet} />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -473,7 +480,8 @@ export function Builder() {
                       <div className="h-full animate-fade-in">
                         <FileExplorer
                           files={files}
-                          onFileSelect={setSelectedFile}
+                          onFileSelect={handleFileSelect}
+                          selectedFile={selectedFile}
                         />
                       </div>
                     </div>
@@ -487,11 +495,12 @@ export function Builder() {
                       <div className="glass-effect rounded-2xl modern-shadow h-full flex flex-col overflow-hidden animate-slide-up">
                         <TabView activeTab={activeTab} onTabChange={setActiveTab} />
                         <div className="flex-1 min-h-0 overflow-hidden">
-                          {activeTab === 'code' ? (
+                          <div className={`h-full ${activeTab === 'code' ? 'block' : 'hidden'}`}>
                             <CodeEditor file={selectedFile} />
-                          ) : (
-                            <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
-                          )}
+                          </div>
+                          <div className={`h-full ${activeTab === 'preview' ? 'block' : 'hidden'}`}>
+                            <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} loading={loading} templateSet={templateSet} />
+                          </div>
                         </div>
                       </div>
                     </div>
