@@ -98,15 +98,17 @@ function FileNode({ item, depth, onFileClick }: FileNodeProps) {
 
 export function FileExplorer({ files, onFileSelect }: FileExplorerProps) {
   return (
-    <Card className="h-full flex flex-col glass-effect modern-shadow">
-      <div className="px-6 py-4 border-b border-white/20 bg-gradient-to-r from-green-50/50 to-emerald-50/50">
-        <h2 className="text-lg font-bold flex items-center gap-3 text-gray-800">
-          <FolderTree className="w-5 h-5 text-green-600" />
-          Explorer
-        </h2>
+    <div className="h-full flex flex-col bg-transparent">
+      <div className="flex border-b border-gray-200/60 px-4 py-3 bg-gradient-to-r from-gray-50/80 to-blue-50/40">
+        <div className="flex rounded-xl p-1 gap-1 w-full sm:w-auto">
+          <h2 className="text-sm font-semibold flex items-center gap-2 text-gray-700 h-8 px-4">
+            <FolderTree className="w-4 h-4 text-green-600" />
+            Explorer
+          </h2>
+        </div>
       </div>
       <ScrollArea className="flex-1">
-        <div className="p-4">
+        <div className="p-2">
           {files.length > 0 ? (
             <div className="space-y-1">
               {files.map((file, index) => (
@@ -131,6 +133,6 @@ export function FileExplorer({ files, onFileSelect }: FileExplorerProps) {
           )}
         </div>
       </ScrollArea>
-    </Card>
+    </div>
   );
 }

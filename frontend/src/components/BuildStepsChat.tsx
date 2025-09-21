@@ -42,11 +42,13 @@ export function BuildStepsChat({ prompt, steps, loading, onSendMessage }: BuildS
 
   return (
     <Card className="flex flex-col h-full glass-effect modern-shadow">
-      <div className="px-6 py-4 border-b border-white/20 bg-gradient-to-r from-blue-50/50 to-purple-50/50">
-        <h2 className="text-lg font-bold flex items-center gap-3 text-gray-800">
-          <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse shadow-lg" />
-          Build Chat
-        </h2>
+      <div className="px-4 py-3 border-b border-white/20 bg-gradient-to-r from-blue-50/50 to-purple-50/50">
+        <div className="flex rounded-xl p-1 gap-1 w-full sm:w-auto">
+          <h2 className="text-sm font-semibold flex items-center gap-2 text-gray-800 h-8 px-4">
+            <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse shadow-lg" />
+            Build Chat
+          </h2>
+        </div>
       </div>
 
       <ScrollArea className="flex-1 p-6" ref={scrollAreaRef}>
@@ -94,7 +96,7 @@ export function BuildStepsChat({ prompt, steps, loading, onSendMessage }: BuildS
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Ask for modifications or improvements..."
             disabled={loading}
-            className="flex-1 bg-white/80 backdrop-blur-sm border-white/50 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 rounded-xl shadow-sm"
+            className="flex-1 bg-white border-2 border-gray-300/60 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-200 rounded-xl shadow-md hover:shadow-lg hover:border-gray-400/60"
           />
           <Button
             type="submit"

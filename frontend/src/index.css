@@ -72,25 +72,48 @@
   .text-gradient {
     @apply bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent;
   }
-  
+
   .glass-effect {
     @apply bg-white/80 backdrop-blur-xl border border-white/20;
   }
-  
+
   .modern-shadow {
     @apply shadow-2xl shadow-blue-500/10;
   }
-  
+
   .hover-lift {
     @apply transition-all duration-200 hover:scale-105 hover:shadow-lg;
   }
-  
+
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out;
   }
-  
+
   .animate-slide-up {
     animation: slideUp 0.8s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  .modern-panel {
+    @apply bg-white/90 backdrop-blur-sm border border-gray-200/80 shadow-lg rounded-xl;
+  }
+
+  .resizable-handle {
+    @apply bg-gradient-to-b from-transparent via-gray-300/60 to-transparent hover:via-blue-400/60 transition-all duration-200;
+  }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+
+  .colorful-bg {
+    background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.1) 0%,
+      rgba(168, 85, 247, 0.08) 50%,
+      rgba(236, 72, 153, 0.06) 100%);
   }
 }
 
@@ -111,5 +134,16 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

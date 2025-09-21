@@ -36,36 +36,48 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 opacity-40">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col relative overflow-hidden">
+      {/* Colorful Background decoration */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.08),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(236,72,153,0.06),transparent_50%)]" />
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366F1' fill-opacity='0.03'%3E%3Ccircle cx='40' cy='40' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
         }} />
+        <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-white/30 to-transparent" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-purple-200/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-radial from-blue-200/20 to-transparent rounded-full blur-2xl" />
       </div>
       
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-white/20 px-4 sm:px-6 py-4 shrink-0 relative z-10">
+      {/* Enhanced Header */}
+      <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200/80 px-4 sm:px-6 py-3 shrink-0 relative z-10 shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">C</span>
+          <div className="flex items-center gap-3 sm:gap-5 min-w-0 flex-1">
+            <div className="flex items-center gap-3 hover:opacity-80 transition-all duration-200 hover:scale-105 group">
+              <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-sm group-hover:shadow-md transition-shadow">
+                <img src="/Clippit.webp" alt="Clippy Logo" className="w-7 h-9 object-contain" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
-                clippy.ai
-              </h1>
+              <div className="flex flex-col">
+                <h1 className="text-lg sm:text-xl font-bold text-gradient leading-tight">
+                  clippy.ai
+                </h1>
+                <span className="text-xs text-gray-500 font-medium hidden sm:block">AI Code Builder</span>
+              </div>
             </div>
           </div>
-          <a
-            href="https://github.com/polhuang/clippy-ai"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-all duration-200 hover:scale-105"
-          >
-            <Github className="w-5 h-5" />
-          </a>
+          <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/polhuang/clippy-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-xl transition-all duration-200 hover:scale-105 group"
+            >
+              <Github className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              <span className="hidden sm:inline text-sm font-medium">GitHub</span>
+            </a>
+          </div>
         </div>
       </header>
 

@@ -305,67 +305,85 @@ export function Builder() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col overflow-hidden relative">
-      {/* Background decoration */}
-      <div className="absolute inset-0 opacity-40">
+    <div className="h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col overflow-hidden relative">
+      {/* Colorful Background decoration */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.08),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(236,72,153,0.06),transparent_50%)]" />
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366F1' fill-opacity='0.03'%3E%3Ccircle cx='40' cy='40' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
         }} />
+        <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-white/30 to-transparent" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-purple-200/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-radial from-blue-200/20 to-transparent rounded-full blur-2xl" />
       </div>
       
-      {/* Modern Header */}
-      <header className="glass-effect border-b border-white/20 px-4 sm:px-6 py-4 shrink-0 relative z-10">
+      {/* Enhanced Header */}
+      <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200/80 px-4 sm:px-6 py-3 shrink-0 relative z-10 shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-200">
-              <div className="w-10 h-10 flex items-center justify-center">
-                <img src="/Clippit.webp" alt="Clippy Logo" className="w-8 h-10 object-contain drop-shadow-lg" />
+          <div className="flex items-center gap-3 sm:gap-5 min-w-0 flex-1">
+            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-all duration-200 hover:scale-105 group">
+              <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-sm group-hover:shadow-md transition-shadow">
+                <img src="/Clippit.webp" alt="Clippy Logo" className="w-7 h-9 object-contain" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gradient">
-                clippy.ai
-              </h1>
+              <div className="flex flex-col">
+                <h1 className="text-lg sm:text-xl font-bold text-gradient leading-tight">
+                  clippy.ai
+                </h1>
+                <span className="text-xs text-gray-500 font-medium hidden sm:block">AI Code Builder</span>
+              </div>
             </Link>
-            <div className="hidden sm:block h-6 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent" />
-            <div className="hidden sm:flex items-center gap-3 text-sm text-gray-600 min-w-0">
-              <span className="font-semibold whitespace-nowrap">Project:</span>
-              <span className="text-gray-800 font-mono text-xs bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-lg max-w-[200px] lg:max-w-md truncate border border-white/40 shadow-sm">
-                {prompt}
-              </span>
+            <div className="hidden sm:block h-8 w-px bg-gradient-to-b from-transparent via-gray-300/60 to-transparent" />
+            <div className="hidden sm:flex items-center gap-3 text-sm min-w-0">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="font-semibold text-gray-700 whitespace-nowrap">Project</span>
+              </div>
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/60 px-4 py-2 rounded-xl max-w-[200px] lg:max-w-md">
+                <span className="text-gray-800 font-mono text-xs truncate block">
+                  {prompt}
+                </span>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {webContainerError && (
-              <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200">
+              <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-xl shadow-sm">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="hidden sm:inline">WebContainer Error: {webContainerError}</span>
-                <span className="sm:hidden">Error</span>
+                <span className="hidden sm:inline font-medium">Container Error</span>
+                <span className="sm:hidden font-medium">Error</span>
               </div>
             )}
             <a
               href="https://github.com/polhuang/clippy-ai"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-all duration-200 hover:scale-105"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-xl transition-all duration-200 hover:scale-105 group"
             >
-              <Github className="w-5 h-5" />
+              <Github className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              <span className="hidden sm:inline text-sm font-medium">GitHub</span>
             </a>
           </div>
         </div>
-        {/* Mobile project info */}
-        <div className="sm:hidden mt-3 flex items-center gap-2 text-xs text-gray-600">
-          <span className="font-semibold">Project:</span>
-          <span className="text-gray-800 font-mono bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-lg max-w-[250px] truncate border border-white/40 shadow-sm">
+        {/* Enhanced Mobile project info */}
+        <div className="sm:hidden mt-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/60 rounded-xl">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="font-semibold text-gray-700 text-sm">Current Project</span>
+          </div>
+          <span className="text-gray-800 font-mono text-xs mt-1 block truncate">
             {prompt}
           </span>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden relative z-10">
+      {/* Enhanced Main Content */}
+      <div className="flex-1 overflow-hidden relative z-10 p-4">
         {/* Desktop Layout */}
         <div className="hidden lg:block h-full">
-          <ResizablePanelGroup direction="vertical" className="h-full">
+          <ResizablePanelGroup direction="vertical" className="h-full rounded-2xl overflow-hidden bg-white/40 backdrop-blur-sm border border-white/60 shadow-xl">
             {/* Top Panel - Horizontal split for Chat, File Explorer, and Code Editor */}
             <ResizablePanel defaultSize={75} minSize={60}>
               <ResizablePanelGroup direction="horizontal" className="h-full">
@@ -383,33 +401,32 @@ export function Builder() {
                   </div>
                 </ResizablePanel>
 
-                <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+                <ResizableHandle withHandle className="w-1 bg-gradient-to-b from-transparent via-gray-300/60 to-transparent hover:via-blue-400/60 transition-all duration-200" />
 
-                {/* File Explorer */}
-                <ResizablePanel defaultSize={25} minSize={15} maxSize={35}>
-                  <div className="h-full p-2">
-                    <div className="h-full animate-fade-in">
-                      <FileExplorer
-                        files={files}
-                        onFileSelect={setSelectedFile}
-                      />
-                    </div>
-                  </div>
-                </ResizablePanel>
+                {/* Unified File Explorer + Code/Preview Container */}
+                <ResizablePanel defaultSize={70} minSize={60}>
+                  <div className="h-full p-4 pl-2 pr-4">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/60 shadow-lg h-full flex animate-slide-up overflow-hidden">
+                      {/* File Explorer */}
+                      <div className="w-[25%] min-w-[200px] max-w-[300px] border-r border-gray-200/60">
+                        <div className="h-full animate-fade-in">
+                          <FileExplorer
+                            files={files}
+                            onFileSelect={setSelectedFile}
+                          />
+                        </div>
+                      </div>
 
-                <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
-
-                {/* Code Editor + Preview */}
-                <ResizablePanel defaultSize={45} minSize={35}>
-                  <div className="h-full p-2 pl-0">
-                    <div className="glass-effect rounded-2xl modern-shadow h-full flex flex-col overflow-hidden animate-slide-up">
-                      <TabView activeTab={activeTab} onTabChange={setActiveTab} />
-                      <div className="flex-1 min-h-0 overflow-hidden">
-                        {activeTab === 'code' ? (
-                          <CodeEditor file={selectedFile} />
-                        ) : (
-                          <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
-                        )}
+                      {/* Code Editor + Preview */}
+                      <div className="flex-1 flex flex-col overflow-hidden">
+                        <TabView activeTab={activeTab} onTabChange={setActiveTab} />
+                        <div className="flex-1 min-h-0 overflow-hidden">
+                          {activeTab === 'code' ? (
+                            <CodeEditor file={selectedFile} />
+                          ) : (
+                            <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -417,21 +434,23 @@ export function Builder() {
               </ResizablePanelGroup>
             </ResizablePanel>
 
-            <ResizableHandle withHandle className="h-2 bg-gradient-to-r from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+            <ResizableHandle withHandle className="h-1 bg-gradient-to-r from-transparent via-gray-300/60 to-transparent hover:via-blue-400/60 transition-all duration-200" />
 
-            {/* Terminal at Bottom */}
+            {/* Enhanced Terminal at Bottom */}
             <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
-              <div className="h-full p-2">
-                <Terminal logs={logs} isRunning={isPreviewRunning} />
+              <div className="h-full p-4 pt-2">
+                <div className="h-full">
+                  <Terminal logs={logs} isRunning={isPreviewRunning} />
+                </div>
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
 
-        {/* Mobile/Tablet Layout */}
-        <div className="lg:hidden h-full flex flex-col">
+        {/* Enhanced Mobile/Tablet Layout */}
+        <div className="lg:hidden h-full flex flex-col bg-white/30 backdrop-blur-sm rounded-2xl border border-white/60 shadow-lg m-2 overflow-hidden">
           {/* Top Section - Chat (collapsible) */}
-          <div className="h-1/3 min-h-[200px] max-h-[400px] p-4 pb-2">
+          <div className="h-1/3 min-h-[200px] max-h-[400px] p-3">
             <div className="h-full animate-fade-in">
               <BuildStepsChat
                 prompt={prompt}
