@@ -47,8 +47,8 @@ export function Home() {
           backgroundRepeat: 'repeat'
         }} />
         <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-white/30 to-transparent" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-purple-200/20 to-transparent rounded-full blur-3xl" />
-        <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-radial from-blue-200/20 to-transparent rounded-full blur-2xl" />
+        <div className="absolute bottom-0 right-0 w-48 h-48 sm:w-96 sm:h-96 bg-gradient-radial from-purple-200/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-20 left-10 sm:left-20 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-radial from-blue-200/20 to-transparent rounded-full blur-2xl" />
       </div>
       
       {/* Enhanced Header */}
@@ -82,64 +82,77 @@ export function Home() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-6 relative z-10">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10">
         <div className="max-w-5xl w-full text-center">
-          <div className="mb-20">
-            <div className="flex items-center justify-center mb-12 relative">
+          <div className="mb-8 sm:mb-20">
+            {/* Mobile mascot layout */}
+            <div className="flex flex-col items-center mb-6 sm:hidden">
+              <img src="/pixel-speech-bubble.png" alt="Speech bubble" className="h-16 w-auto opacity-90 animate-bounce mb-2 ml-20 mt-6" style={{imageRendering: 'pixelated', animationDuration: '3s'}} />
+              <img src="/Clippit.webp" alt="Clippy.ai Logo" className="w-24 h-28 object-contain drop-shadow-2xl" />
+            </div>
+
+            {/* Desktop mascot layout */}
+            <div className="hidden sm:flex items-center justify-center mb-12 relative">
               <div className="flex items-center ml-32">
                 <img src="/Clippit.webp" alt="Clippy.ai Logo" className="w-40 h-48 object-contain drop-shadow-2xl" />
                 <img src="/pixel-speech-bubble.png" alt="Speech bubble" className="h-28 w-auto opacity-90 animate-bounce -ml-24 -mt-48" style={{imageRendering: 'pixelated', animationDuration: '3s'}} />
               </div>
             </div>
 
-            <h1 className="text-6xl sm:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 mb-8 tracking-tight font-inter leading-tight">
+            <h1 className="text-3xl sm:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 mb-4 sm:mb-8 tracking-tight font-inter leading-tight px-2">
               What shall we build today?
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
               Tell me the app you want me to build, and I'll build something that might actually work (no promises)
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto px-4">
             <form onSubmit={handleSubmit}>
               <div className="relative group">
-                <div className="flex items-center bg-white/90 backdrop-blur-sm border-2 border-white/50 shadow-2xl focus-within:border-blue-500 focus-within:shadow-blue-500/25 transition-all duration-300 rounded-2xl p-6 hover:shadow-xl">
-                  <Sparkles className="w-6 h-6 text-blue-500 mr-4 flex-shrink-0" />
-                  <input
-                    type="text"
-                    id="prompt"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Describe what you want to build... (e.g., 'A todo app with dark mode')"
-                    className="flex-1 bg-transparent text-xl placeholder-gray-400 text-gray-900 focus:outline-none font-medium font-inter"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSubmit(e);
-                      }
-                    }}
-                  />
+                <div className="flex flex-col sm:flex-row items-center bg-white/90 backdrop-blur-sm border-2 border-white/50 shadow-2xl focus-within:border-blue-500 focus-within:shadow-blue-500/25 transition-all duration-300 rounded-2xl p-4 sm:p-6 hover:shadow-xl gap-4 sm:gap-0">
+                  <div className="flex items-center w-full sm:flex-1">
+                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-3 sm:mr-4 flex-shrink-0" />
+                    <input
+                      type="text"
+                      id="prompt"
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      placeholder="Describe what you want to build..."
+                      className="flex-1 bg-transparent text-lg sm:text-xl placeholder-gray-400 text-gray-900 focus:outline-none font-medium font-inter"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSubmit(e);
+                        }
+                      }}
+                    />
+                  </div>
                   {prompt.trim() && (
                     <button
                       type="submit"
-                      className="ml-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 hover:scale-105 shadow-lg"
+                      className="w-full sm:w-auto sm:ml-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 hover:scale-105 shadow-lg font-medium"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="sm:hidden">Build App</span>
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </div>
                     </button>
                   )}
                 </div>
               </div>
             </form>
 
-            <div className="mt-8 text-center">
+            <div className="mt-6 sm:mt-8 text-center">
               <button
                 onClick={getRandomIdea}
-                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-lg transition-all duration-200 hover:scale-105 bg-white/50 backdrop-blur-sm px-6 py-3 rounded-xl border border-white/50 hover:shadow-lg"
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-base sm:text-lg transition-all duration-200 hover:scale-105 bg-white/50 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-xl border border-white/50 hover:shadow-lg"
               >
-                <span className="text-2xl">💡</span>
-                Get a random app idea
+                <span className="text-xl sm:text-2xl">💡</span>
+                <span className="hidden sm:inline">Get a random app idea</span>
+                <span className="sm:hidden">Random idea</span>
               </button>
             </div>
           </div>

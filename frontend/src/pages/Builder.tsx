@@ -45,12 +45,12 @@ export function Builder() {
   }, [webcontainer]);
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
+  const [activeTab, setActiveTab] = useState<'code' | 'preview' | 'chat' | 'explorer' | 'terminal'>('chat');
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
 
   const handleFileSelect = (file: FileItem) => {
     setSelectedFile(file);
-    setActiveTab('code');
+    setActiveTab('explorer');
   };
   
   const [steps, setSteps] = useState<Step[]>([]);
@@ -326,57 +326,61 @@ export function Builder() {
       </div>
       
       {/* Enhanced Header */}
-      <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200/80 px-4 sm:px-6 py-3 shrink-0 relative z-10 shadow-sm">
+      <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200/80 px-3 sm:px-4 lg:px-6 py-2 sm:py-3 shrink-0 relative z-10 shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 sm:gap-5 min-w-0 flex-1">
-            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-all duration-200 hover:scale-105 group">
-              <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-sm group-hover:shadow-md transition-shadow">
-                <img src="/Clippit.webp" alt="Clippy Logo" className="w-7 h-9 object-contain" />
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-5 min-w-0 flex-1">
+            <Link to="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-all duration-200 hover:scale-105 group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg sm:rounded-xl shadow-sm group-hover:shadow-md transition-shadow">
+                <img src="/Clippit.webp" alt="Clippy Logo" className="w-5 h-6 sm:w-7 sm:h-9 object-contain" />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-lg sm:text-xl font-bold text-gradient leading-tight">
+                <h1 className="text-base sm:text-lg lg:text-xl font-bold text-gradient leading-tight">
                   clippy.ai
                 </h1>
                 <span className="text-xs text-gray-500 font-medium hidden sm:block">AI Code Builder</span>
               </div>
             </Link>
             <div className="hidden sm:block h-8 w-px bg-gradient-to-b from-transparent via-gray-300/60 to-transparent" />
-            <div className="hidden sm:flex items-center gap-3 text-sm min-w-0">
+            <div className="hidden lg:flex items-center gap-3 text-sm min-w-0">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="font-semibold text-gray-700 whitespace-nowrap">Project</span>
               </div>
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/60 px-4 py-2 rounded-xl max-w-[200px] lg:max-w-md">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/60 px-4 py-2 rounded-xl max-w-[200px] xl:max-w-md">
                 <span className="text-gray-800 font-mono text-xs truncate block">
                   {prompt}
                 </span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Mobile Performance Warning */}
+            <div className="flex md:hidden items-center gap-1 sm:gap-2 text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 px-2 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl shadow-sm">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+              <span className="font-medium">Mobile performance degraded</span>
+            </div>
             {webContainerError && (
-              <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-xl shadow-sm">
+              <div className="flex items-center gap-1 sm:gap-2 text-xs text-red-700 bg-red-50 border border-red-200 px-2 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl shadow-sm">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="hidden sm:inline font-medium">Container Error</span>
-                <span className="sm:hidden font-medium">Error</span>
+                <span className="font-medium">Error</span>
               </div>
             )}
             <a
               href="https://github.com/polhuang/clippy-ai"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-xl transition-all duration-200 hover:scale-105 group"
+              className="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-2 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl transition-all duration-200 hover:scale-105 group"
             >
-              <Github className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              <Github className="w-3 h-3 sm:w-4 sm:h-4 group-hover:rotate-12 transition-transform" />
               <span className="hidden sm:inline text-sm font-medium">GitHub</span>
             </a>
           </div>
         </div>
         {/* Enhanced Mobile project info */}
-        <div className="sm:hidden mt-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/60 rounded-xl">
+        <div className="sm:hidden mt-2 p-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/60 rounded-lg">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="font-semibold text-gray-700 text-sm">Current Project</span>
+            <span className="font-semibold text-gray-700 text-xs">Current Project</span>
           </div>
           <span className="text-gray-800 font-mono text-xs mt-1 block truncate">
             {prompt}
@@ -385,7 +389,7 @@ export function Builder() {
       </header>
 
       {/* Enhanced Main Content */}
-      <div className="flex-1 overflow-hidden relative z-10 p-4">
+      <div className="flex-1 overflow-hidden relative z-10 p-2 sm:p-4">
         {/* Desktop Layout */}
         <div className="hidden lg:block h-full">
           <ResizablePanelGroup direction="vertical" className="h-full rounded-2xl overflow-hidden bg-white/40 backdrop-blur-sm border border-white/60 shadow-xl">
@@ -455,51 +459,155 @@ export function Builder() {
         </div>
 
         {/* Enhanced Mobile/Tablet Layout */}
-        <div className="lg:hidden h-full flex flex-col bg-white/30 backdrop-blur-sm rounded-2xl border border-white/60 shadow-lg m-2 overflow-hidden">
-          {/* Top Section - Chat (collapsible) */}
-          <div className="h-1/3 min-h-[200px] max-h-[400px] p-3">
-            <div className="h-full animate-fade-in">
-              <BuildStepsChat
-                prompt={prompt}
-                steps={steps}
-                loading={loading || !templateSet}
-                onSendMessage={handleSendMessage}
-              />
+        <div className="lg:hidden h-full flex flex-col bg-white/30 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/60 shadow-lg m-1 sm:m-2 overflow-hidden">
+          {/* Mobile: Full-screen tabbed interface */}
+          <div className="md:hidden h-full flex flex-col">
+            {/* Mobile Tab Navigation */}
+            <div className="flex border-b border-white/20 bg-gradient-to-r from-gray-50/80 to-blue-50/40">
+              <button
+                onClick={() => setActiveTab('chat' as any)}
+                className={`flex-1 px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                  activeTab === 'chat'
+                    ? 'text-blue-700 bg-white/60 border-b-2 border-blue-500'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/30'
+                }`}
+              >
+                💬 Chat
+              </button>
+              <button
+                onClick={() => setActiveTab('explorer' as any)}
+                className={`flex-1 px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                  activeTab === 'explorer'
+                    ? 'text-blue-700 bg-white/60 border-b-2 border-blue-500'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/30'
+                }`}
+              >
+                📝 Code
+              </button>
+              <button
+                onClick={() => setActiveTab('preview' as any)}
+                className={`flex-1 px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                  activeTab === 'preview'
+                    ? 'text-purple-700 bg-white/60 border-b-2 border-purple-500'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/30'
+                }`}
+              >
+                👁️ Preview
+              </button>
+              <button
+                onClick={() => setActiveTab('terminal' as any)}
+                className={`flex-1 px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                  activeTab === 'terminal'
+                    ? 'text-green-700 bg-white/60 border-b-2 border-green-500'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/30'
+                }`}
+              >
+                💻 Terminal
+              </button>
+            </div>
+
+            {/* Mobile Tab Content */}
+            <div className="flex-1 overflow-hidden">
+              {/* Build Chat Tab */}
+              <div className={`h-full p-3 ${activeTab === 'chat' ? 'block' : 'hidden'}`}>
+                <div className="h-full animate-fade-in">
+                  <BuildStepsChat
+                    prompt={prompt}
+                    steps={steps}
+                    loading={loading || !templateSet}
+                    onSendMessage={handleSendMessage}
+                  />
+                </div>
+              </div>
+
+              {/* Code Tab (File Explorer + Code Editor) */}
+              <div className={`h-full ${activeTab === 'explorer' ? 'block' : 'hidden'}`}>
+                <div className="h-full flex flex-col">
+                  {/* Explorer */}
+                  <div className="h-1/2 border-b border-white/20">
+                    <div className="h-full animate-fade-in">
+                      <FileExplorer
+                        files={files}
+                        onFileSelect={handleFileSelect}
+                        selectedFile={selectedFile}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Code Editor */}
+                  <div className="flex-1 p-2">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/60 shadow-lg h-full overflow-hidden">
+                      <CodeEditor file={selectedFile} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview Tab */}
+              <div className={`h-full p-3 ${activeTab === 'preview' ? 'block' : 'hidden'}`}>
+                <div className="h-full animate-fade-in">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/60 shadow-lg h-full overflow-hidden">
+                    <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} loading={loading} templateSet={templateSet} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Terminal Tab */}
+              <div className={`h-full p-3 ${activeTab === 'terminal' ? 'block' : 'hidden'}`}>
+                <div className="h-full animate-fade-in">
+                  <Terminal logs={logs} isRunning={isPreviewRunning} />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Bottom Section - Split between Explorer and Editor */}
-          <div className="flex-1 overflow-hidden">
+          {/* Tablet: Use resizable panels but with better mobile sizing */}
+          <div className="hidden md:block lg:hidden h-full">
             <ResizablePanelGroup direction="vertical" className="h-full">
               {/* Main content area */}
-              <ResizablePanel defaultSize={75} minSize={50}>
+              <ResizablePanel defaultSize={70} minSize={60}>
                 <ResizablePanelGroup direction="horizontal" className="h-full">
-                  {/* File Explorer */}
-                  <ResizablePanel defaultSize={35} minSize={25} maxSize={50}>
+                  {/* Build Chat */}
+                  <ResizablePanel defaultSize={30} minSize={25} maxSize={45}>
                     <div className="h-full p-2 pr-1">
                       <div className="h-full animate-fade-in">
-                        <FileExplorer
-                          files={files}
-                          onFileSelect={handleFileSelect}
-                          selectedFile={selectedFile}
+                        <BuildStepsChat
+                          prompt={prompt}
+                          steps={steps}
+                          loading={loading || !templateSet}
+                          onSendMessage={handleSendMessage}
                         />
                       </div>
                     </div>
                   </ResizablePanel>
 
-                  <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+                  <ResizableHandle withHandle className="w-3 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
 
-                  {/* Code Editor + Preview */}
-                  <ResizablePanel defaultSize={65} minSize={50}>
+                  {/* File Explorer + Code Editor/Preview */}
+                  <ResizablePanel defaultSize={70} minSize={55}>
                     <div className="h-full p-2 pl-1">
-                      <div className="glass-effect rounded-2xl modern-shadow h-full flex flex-col overflow-hidden animate-slide-up">
-                        <TabView activeTab={activeTab} onTabChange={setActiveTab} />
-                        <div className="flex-1 min-h-0 overflow-hidden">
-                          <div className={`h-full ${activeTab === 'code' ? 'block' : 'hidden'}`}>
-                            <CodeEditor file={selectedFile} />
+                      <div className="glass-effect rounded-2xl modern-shadow h-full flex overflow-hidden animate-slide-up">
+                        {/* File Explorer */}
+                        <div className="w-[30%] min-w-[180px] max-w-[250px] border-r border-gray-200/60">
+                          <div className="h-full animate-fade-in">
+                            <FileExplorer
+                              files={files}
+                              onFileSelect={handleFileSelect}
+                              selectedFile={selectedFile}
+                            />
                           </div>
-                          <div className={`h-full ${activeTab === 'preview' ? 'block' : 'hidden'}`}>
-                            <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} loading={loading} templateSet={templateSet} />
+                        </div>
+
+                        {/* Code Editor + Preview */}
+                        <div className="flex-1 flex flex-col overflow-hidden">
+                          <TabView activeTab={activeTab} onTabChange={setActiveTab} />
+                          <div className="flex-1 min-h-0 overflow-hidden">
+                            <div className={`h-full ${activeTab === 'code' ? 'block' : 'hidden'}`}>
+                              <CodeEditor file={selectedFile} />
+                            </div>
+                            <div className={`h-full ${activeTab === 'preview' ? 'block' : 'hidden'}`}>
+                              <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} loading={loading} templateSet={templateSet} />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -508,10 +616,10 @@ export function Builder() {
                 </ResizablePanelGroup>
               </ResizablePanel>
 
-              <ResizableHandle withHandle className="h-2 bg-gradient-to-r from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+              <ResizableHandle withHandle className="h-3 bg-gradient-to-r from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
 
               {/* Terminal */}
-              <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
+              <ResizablePanel defaultSize={30} minSize={20} maxSize={40}>
                 <div className="h-full p-2">
                   <Terminal logs={logs} isRunning={isPreviewRunning} />
                 </div>

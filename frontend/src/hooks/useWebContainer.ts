@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { WebContainer } from '@webcontainer/api';
+import { isWebContainerSupported, getMobileMessage } from '../utils/deviceDetection';
 
 // Global singleton instance
 let globalWebContainer: WebContainer | undefined;
@@ -12,6 +13,13 @@ export function useWebContainer() {
     const [retryCount, setRetryCount] = useState(0);
 
     async function main() {
+        // Check if WebContainer is supported on this device
+        if (!isWebContainerSupported()) {
+            console.log('WebContainer not supported on this device');
+            setError(getMobileMessage());
+            return;
+        }
+
         // If we already have a global instance, use it
         if (globalWebContainer) {
             console.log('Using existing WebContainer instance');
