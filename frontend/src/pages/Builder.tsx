@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { BuildStepsChat } from '../components/BuildStepsChat';
 import { FileExplorer } from '../components/FileExplorer';
 import { TabView } from '../components/TabView';
@@ -110,9 +110,54 @@ export function Builder() {
         originalFiles = finalAnswerRef;
       } else if (step?.type === StepType.RunScript) {
         handleLog(`Running command: ${step.code}`);
-        // Note: Shell commands are not executed in the browser environment
-        // They would be executed in the WebContainer when the preview starts
-        handleLog(`✓ Command queued: ${step.code}`);
+
+        // Handle npm install commands by adding dependencies to package.json
+        if (step.code.includes('npm install')) {
+          // Parse the command properly - stop at && or other operators
+          const commandParts = step.code.split('&&')[0].trim(); // Take only the npm install part
+          const packages = commandParts.split(' ').slice(2); // Remove 'npm install'
+
+          // Find and update package.json
+          const updatePackageJson = (fileStructure: FileItem[]): boolean => {
+            for (let file of fileStructure) {
+              if (file.name === 'package.json' && file.type === 'file') {
+                try {
+                  const packageData = JSON.parse(file.content || '{}');
+                  if (!packageData.dependencies) {
+                    packageData.dependencies = {};
+                  }
+
+                  // Add new packages with latest version
+                  packages.forEach(pkg => {
+                    if (pkg && !pkg.startsWith('-') && pkg.trim() && !pkg.includes('&')) { // Skip flags, empty strings, and shell operators
+                      packageData.dependencies[pkg] = 'latest';
+                      handleLog(`Added ${pkg} to package.json`);
+                    }
+                  });
+
+                  file.content = JSON.stringify(packageData, null, 2);
+                  return true;
+                } catch (error) {
+                  handleLog(`Error updating package.json: ${error}`);
+                  return false;
+                }
+              } else if (file.type === 'folder' && file.children) {
+                if (updatePackageJson(file.children)) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          };
+
+          if (updatePackageJson(originalFiles)) {
+            handleLog(`✓ Dependencies added to package.json: ${packages.join(', ')}`);
+          } else {
+            handleLog(`✗ Could not find package.json to update`);
+          }
+        } else {
+          handleLog(`✓ Command queued: ${step.code}`);
+        }
       }
 
     })
@@ -273,14 +318,14 @@ export function Builder() {
       <header className="glass-effect border-b border-white/20 px-4 sm:px-6 py-4 shrink-0 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">C</span>
+            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-200">
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img src="/Clippit.webp" alt="Clippy Logo" className="w-8 h-10 object-contain drop-shadow-lg" />
               </div>
               <h1 className="text-xl sm:text-2xl font-bold text-gradient">
                 clippy.ai
               </h1>
-            </div>
+            </Link>
             <div className="hidden sm:block h-6 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent" />
             <div className="hidden sm:flex items-center gap-3 text-sm text-gray-600 min-w-0">
               <span className="font-semibold whitespace-nowrap">Project:</span>
@@ -320,50 +365,64 @@ export function Builder() {
       <div className="flex-1 overflow-hidden relative z-10">
         {/* Desktop Layout */}
         <div className="hidden lg:block h-full">
-          <ResizablePanelGroup direction="horizontal" className="h-full">
-            {/* Chat Panel */}
-            <ResizablePanel defaultSize={28} minSize={20} maxSize={40}>
-              <div className="h-full p-4 pr-2">
-                <div className="h-full animate-fade-in">
-                  <BuildStepsChat
-                    prompt={prompt}
-                    steps={steps}
-                    loading={loading || !templateSet}
-                    onSendMessage={handleSendMessage}
-                  />
-                </div>
-              </div>
-            </ResizablePanel>
-
-            <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
-
-            {/* File Explorer */}
-            <ResizablePanel defaultSize={24} minSize={15} maxSize={35}>
-              <div className="h-full p-2">
-                <div className="h-full animate-fade-in">
-                  <FileExplorer
-                    files={files}
-                    onFileSelect={setSelectedFile}
-                  />
-                </div>
-              </div>
-            </ResizablePanel>
-
-            <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
-
-            {/* Code Editor + Preview */}
-            <ResizablePanel defaultSize={48} minSize={35}>
-              <div className="h-full p-2 pl-0">
-                <div className="glass-effect rounded-2xl modern-shadow h-full flex flex-col overflow-hidden animate-slide-up">
-                  <TabView activeTab={activeTab} onTabChange={setActiveTab} />
-                  <div className="flex-1 min-h-0 overflow-hidden">
-                    {activeTab === 'code' ? (
-                      <CodeEditor file={selectedFile} />
-                    ) : (
-                      <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
-                    )}
+          <ResizablePanelGroup direction="vertical" className="h-full">
+            {/* Top Panel - Horizontal split for Chat, File Explorer, and Code Editor */}
+            <ResizablePanel defaultSize={75} minSize={60}>
+              <ResizablePanelGroup direction="horizontal" className="h-full">
+                {/* Chat Panel */}
+                <ResizablePanel defaultSize={30} minSize={20} maxSize={40}>
+                  <div className="h-full p-4 pr-2">
+                    <div className="h-full animate-fade-in">
+                      <BuildStepsChat
+                        prompt={prompt}
+                        steps={steps}
+                        loading={loading || !templateSet}
+                        onSendMessage={handleSendMessage}
+                      />
+                    </div>
                   </div>
-                </div>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+
+                {/* File Explorer */}
+                <ResizablePanel defaultSize={25} minSize={15} maxSize={35}>
+                  <div className="h-full p-2">
+                    <div className="h-full animate-fade-in">
+                      <FileExplorer
+                        files={files}
+                        onFileSelect={setSelectedFile}
+                      />
+                    </div>
+                  </div>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle className="w-2 bg-gradient-to-b from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+
+                {/* Code Editor + Preview */}
+                <ResizablePanel defaultSize={45} minSize={35}>
+                  <div className="h-full p-2 pl-0">
+                    <div className="glass-effect rounded-2xl modern-shadow h-full flex flex-col overflow-hidden animate-slide-up">
+                      <TabView activeTab={activeTab} onTabChange={setActiveTab} />
+                      <div className="flex-1 min-h-0 overflow-hidden">
+                        {activeTab === 'code' ? (
+                          <CodeEditor file={selectedFile} />
+                        ) : (
+                          <PreviewFrame webContainer={webcontainer} files={files} onLog={handleLog} />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle className="h-2 bg-gradient-to-r from-transparent via-gray-300 to-transparent hover:via-gray-400 transition-colors" />
+
+            {/* Terminal at Bottom */}
+            <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
+              <div className="h-full p-2">
+                <Terminal logs={logs} isRunning={isPreviewRunning} />
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>

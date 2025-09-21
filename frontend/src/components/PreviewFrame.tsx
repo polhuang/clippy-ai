@@ -11,6 +11,7 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
   // In a real implementation, this would compile and render the preview
   const [url, setUrl] = useState("");
   const [isStarting, setIsStarting] = useState(false);
+  const [lastPackageJson, setLastPackageJson] = useState<string>("");
 
   async function main() {
     if (!webContainer) {
@@ -23,33 +24,82 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
       return;
     }
 
-    if (isStarting || url) {
+    // Find package.json content
+    const findPackageJson = (fileList: any[]): string | null => {
+      for (const file of fileList) {
+        if (file.name === 'package.json' && file.type === 'file') {
+          return file.content || '';
+        }
+        if (file.children) {
+          const found = findPackageJson(file.children);
+          if (found !== null) return found;
+        }
+      }
+      return null;
+    };
+
+    const currentPackageJson = findPackageJson(files);
+    if (!currentPackageJson) {
+      onLog?.('No package.json found, cannot start dev server');
+      return;
+    }
+
+    // Check if package.json has changed (indicating new dependencies)
+    const packageJsonChanged = lastPackageJson && lastPackageJson !== currentPackageJson;
+
+    if (isStarting && !packageJsonChanged) {
       onLog?.('Preview already starting or started');
       return;
     }
 
+    // If URL exists and package.json hasn't changed, don't restart
+    if (url && !packageJsonChanged) {
+      return;
+    }
+
     setIsStarting(true);
+    setLastPackageJson(currentPackageJson);
+
+    // If package.json changed and we have a running server, restart
+    if (packageJsonChanged && url) {
+      onLog?.('Package.json changed, reinstalling dependencies...');
+      setUrl(""); // Reset URL to trigger reinstall
+    }
 
     try {
-      // Check if package.json exists
-      const packageJsonExists = files.some(file =>
-        file.name === 'package.json' ||
-        (file.children && file.children.some((child: any) => child.name === 'package.json'))
-      );
-
-      if (!packageJsonExists) {
-        onLog?.('No package.json found, cannot start dev server');
-        setIsStarting(false);
-        return;
-      }
 
       onLog?.('Starting npm install...');
       // Install dependencies
       const installProcess = await webContainer.spawn('npm', ['install']);
 
+      let lastProgressTime = 0;
       installProcess.output.pipeTo(new WritableStream({
         write(data) {
-          onLog?.(`Install: ${data}`);
+          // Remove ANSI escape codes and control characters
+          const cleanData = data
+            .replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '') // Remove ANSI escape sequences
+            .replace(/\x1b\[[0-9]*[A-Z]/g, '')     // Remove additional ANSI codes
+            .replace(/[\x00-\x1f\x7f]/g, '')       // Remove control characters
+            .trim();
+
+          if (cleanData && cleanData.length > 1) {
+            // Check for spinner characters or progress indicators
+            if (cleanData.match(/^[|\\\/\-\+\*]$/) || cleanData.length === 1) {
+              // Throttle progress messages to avoid spam
+              const now = Date.now();
+              if (now - lastProgressTime > 2000) { // Only show progress every 2 seconds
+                onLog?.(`Install: Installing dependencies...`);
+                lastProgressTime = now;
+              }
+            } else if (cleanData.includes('packages') || cleanData.includes('added') || cleanData.includes('changed') || cleanData.includes('audited')) {
+              // Show package install summaries
+              onLog?.(`Install: ${cleanData}`);
+            } else if (cleanData.includes('npm WARN') || cleanData.includes('npm ERR')) {
+              // Show npm warnings and errors
+              onLog?.(`Install: ${cleanData}`);
+            }
+            // Skip other output to reduce noise
+          }
         }
       }));
 
@@ -67,9 +117,34 @@ export function PreviewFrame({ files, webContainer, onLog }: PreviewFrameProps) 
       // Start dev server
       const devProcess = await webContainer.spawn('npm', ['run', 'dev']);
 
+      let lastDevProgressTime = 0;
       devProcess.output.pipeTo(new WritableStream({
         write(data) {
-          onLog?.(`Dev server: ${data}`);
+          // Remove ANSI escape codes and control characters
+          const cleanData = data
+            .replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '') // Remove ANSI escape sequences
+            .replace(/\x1b\[[0-9]*[A-Z]/g, '')     // Remove additional ANSI codes
+            .replace(/[\x00-\x1f\x7f]/g, '')       // Remove control characters
+            .trim();
+
+          if (cleanData && cleanData.length > 2) {
+            // Filter out spinner characters and single characters
+            if (cleanData.match(/^[|\\\/\-\+\*]$/) || cleanData.length === 1) {
+              // Throttle progress messages
+              const now = Date.now();
+              if (now - lastDevProgressTime > 3000) { // Only show progress every 3 seconds
+                onLog?.(`Dev server: Starting server...`);
+                lastDevProgressTime = now;
+              }
+            } else if (cleanData.includes('VITE') || cleanData.includes('Local:') || cleanData.includes('Network:') || cleanData.includes('vite]') || cleanData.includes('ready in')) {
+              // Show important Vite messages
+              onLog?.(`Dev server: ${cleanData}`);
+            } else if (cleanData.includes('ERROR') || cleanData.includes('WARN') || cleanData.includes('✓')) {
+              // Show errors, warnings, and success messages
+              onLog?.(`Dev server: ${cleanData}`);
+            }
+            // Skip other output to reduce noise
+          }
         }
       }));
 

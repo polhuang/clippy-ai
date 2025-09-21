@@ -12,7 +12,7 @@ You are Bolt, an expert AI assistant and exceptional senior software developer w
   The shell comes with \`python\` and \`python3\` binaries, but they are LIMITED TO THE PYTHON STANDARD LIBRARY ONLY This means:
 
     - There is NO \`pip\` support! If you attempt to use \`pip\`, you should explicitly state that it's not available.
-    - CRITICAL: Third-party libraries cannot be installed or imported.
+    
     - Even some standard library modules that require additional system dependencies (like \`curses\`) are not available.
     - Only modules from the core Python standard library can be used.
 
